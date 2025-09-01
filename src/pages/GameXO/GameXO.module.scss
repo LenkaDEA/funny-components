@@ -1,0 +1,55 @@
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__title {
+        font-size: xx-large;
+        color: rgb(16, 71, 71);
+    }
+
+    &__turn {
+        margin: 5px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    &__players {
+        display: flex;
+        gap: 10px;
+
+        &_name {
+            margin-top: 0px;
+            padding: 5px;
+            font-size: 20px;
+            font-weight: 600;
+            background-color: rgb(105, 199, 199);
+            border-radius: 8px;
+        }
+    }
+
+    &__fild {
+        width: 600px;
+        height: 600px;
+
+        display: grid;
+        grid-template-columns: 200px 200px 200px;
+        grid-template-rows: 200px 200px 200px;
+
+
+        background-color: rgb(255, 255, 255);
+        border: 4px solid rgb(62, 141, 194);
+        border-radius: 8px;
+
+        &_button {
+
+            background-color: rgb(181, 246, 255);
+            border: 1px solid rgb(62, 141, 194);
+
+            &:hover {
+                background-color: rgb(222, 248, 255);
+            }
+        }
+    }
+
+}
