@@ -25,6 +25,9 @@
       ],
       "pages": [
         "pages/*"
+      ],
+      "styles": [
+        "styles/*"
       ]
     }
   }

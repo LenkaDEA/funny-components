@@ -1,6 +1,8 @@
-import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router'
-import routesConfig from 'config/routes.tsx'
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import routesConfig from 'config/routes.tsx';
+
+import 'styles/styles.scss'
 
 const router = createBrowserRouter(routesConfig);
 
