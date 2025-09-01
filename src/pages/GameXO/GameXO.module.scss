@@ -9,6 +9,15 @@
         color: rgb(16, 71, 71);
     }
 
+    &__viewPlayers {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        height: 95px;
+    }
+
     &__turn {
         margin: 5px;
         font-size: 26px;
