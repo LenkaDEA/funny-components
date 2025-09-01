@@ -4,6 +4,7 @@
     align-items: center;
 
     &__title {
+        margin-top: 10px;
         font-size: xx-large;
         color: rgb(16, 71, 71);
     }
@@ -23,9 +24,20 @@
             padding: 5px;
             font-size: 20px;
             font-weight: 600;
-            background-color: rgb(105, 199, 199);
+
             border-radius: 8px;
         }
+
+        &_name_lead {
+            margin-top: 0px;
+            padding: 5px;
+            font-size: 20px;
+            font-weight: 600;
+
+            border-radius: 8px;
+            background-color: rgb(105, 199, 199);
+        }
+
     }
 
     &__fild {
@@ -45,10 +57,30 @@
 
             background-color: rgb(181, 246, 255);
             border: 1px solid rgb(62, 141, 194);
+            font-size: 100px;
+            color: rgb(43, 102, 141);
 
             &:hover {
                 background-color: rgb(222, 248, 255);
             }
+        }
+    }
+
+    &__clean {
+        margin: 9px;
+        height: 30px;
+
+        background-color: rgb(62, 141, 194);
+
+        font-size: 20px;
+        font-weight: 550;
+        color: aliceblue;
+
+        border: none;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: rgb(118, 185, 230);
         }
     }
 
