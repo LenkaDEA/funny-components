@@ -73,6 +73,7 @@ const GameXO: React.FC = () => {
     const [winerX, setWinerX] = useState(false);
     const [winerO, setWinerO] = useState(false);
 
+    const [moves, setMoves] = useState(0);
 
     const handleClick = (id: number) => {
         setPlayer(!player);
@@ -95,6 +96,7 @@ const GameXO: React.FC = () => {
             };
         });
         setFild(copyFild);
+        setMoves(moves + 1);
     }
 
     const cleanFild = () => {
@@ -108,18 +110,16 @@ const GameXO: React.FC = () => {
         setResultsO([]);
         setWinerX(false);
         setWinerO(false);
+        setMoves(0);
     }
 
     useEffect(() => {
-        console.log(checkResults(resultsX));
-        console.log(checkResults(resultsO));
         if (checkResults(resultsX)) setWinerX(true);
         if (checkResults(resultsO)) setWinerO(true);
     }, [fild]);
 
     const viewPlayers = (
         <>
-
             <p className={styles.game__turn}>Ход игрока</p>
             <div className={styles.game__players}>
                 <p className={player ? styles.game__players_name : styles.game__players_name_lead}>Игрок X</p>
@@ -131,10 +131,11 @@ const GameXO: React.FC = () => {
         <h2 className={styles.game__title}>Крестики нолики</h2>
 
         <div className={styles.game__viewPlayers}>
-            {(!winerX && !winerO) && viewPlayers}
+            {(!winerX && !winerO && !(moves === fild.length)) && viewPlayers}
 
             {winerX && <p className={styles.game__players_name}>Победил игрок X</p>}
             {winerO && <p className={styles.game__players_name}>Победил игрок O</p>}
+            {(moves === fild.length) && <p className={styles.game__players_name}>Ничья!</p>}
         </div>
 
 
