@@ -1,14 +1,14 @@
 import type React from "react";
 
 import styles from "./GameXO.module.scss";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
-type fildItemType = {
+type FildItemType = {
     id: number,
     state: string | null
 }
 
-const fildItems: fildItemType[] = [
+const FildItems: FildItemType[] = [
     { id: 0, state: null },
     { id: 1, state: null },
     { id: 2, state: null },
@@ -41,58 +41,94 @@ function checkResults(comb: number[]) {
     return result;
 };
 
-// type playersType = {
-//     id: number,
-//     name: string,
-//     win: boolean,
-//     result: number[]
-// }
+type PlayersType = {
+    id: number,
+    name: string,
+    active: boolean,
+    win: boolean,
+    result: number[]
+}
 
-// const playersData: playersType[] = [
-//     {
-//         id: 0,
-//         name: "X",
-//         win: false,
-//         result: []
-//     },
-//     {
-//         id: 1,
-//         name: "O",
-//         win: false,
-//         result: []
-//     }
-// ]
+const PlayersData: PlayersType[] = [
+    {
+        id: 0,
+        name: "X",
+        active: true,
+        win: false,
+        result: []
+    },
+    {
+        id: 1,
+        name: "O",
+        active: false,
+        win: false,
+        result: []
+    }
+]
+
+const FORM_ACTIONS = {
+    setActive: "SetActive",
+    setWin: "setWin",
+    setResult: "setResult",
+    setClean: "setClean"
+}
+
+type PayloadTypes = {
+    name?: string,
+    result?: number
+}
+
+type Action = {
+    type: string;
+    payload: PayloadTypes
+};
+
+function gameReducer(state: PlayersType[], action: Action) {
+    switch (action.type) {
+        case FORM_ACTIONS.setActive:
+            return state.map(player => ({
+                ...player,
+                active: !player.active
+            }))
+
+        case FORM_ACTIONS.setResult:
+            return state.map(player => ({
+                ...player,
+                result: action.payload.name === player.name ? ((action.payload.result !== undefined && action.payload.result !== null)
+                    ? [...player.result, action.payload.result]
+                    : player.result) : player.result
+            }))
+
+        case FORM_ACTIONS.setWin:
+            return state.map(player => ({
+                ...player,
+                win: (action.payload.name === player.name) ? true : player.win
+            }))
+
+        case FORM_ACTIONS.setClean:
+            return PlayersData
+
+        default: return state;
+    }
+};
 
 const GameXO: React.FC = () => {
-    const [fild, setFild] = useState(fildItems);
-    const [player, setPlayer] = useState(false); // false - X; true - 0
-    const [resultsX, setResultsX] = useState<number[]>([]);
-    const [resultsO, setResultsO] = useState<number[]>([]);
-
-    // const [players, setPlayers] = useState<playersType[]>(playersData); // TODO
-    const [winerX, setWinerX] = useState(false);
-    const [winerO, setWinerO] = useState(false);
-
+    const [fild, setFild] = useState(FildItems);
+    const [gameState, gameDispatch] = useReducer(gameReducer, PlayersData);
+    const [finish, setFinish] = useState(false);
     const [moves, setMoves] = useState(0);
 
     const handleClick = (id: number) => {
-        setPlayer(!player);
+        gameDispatch({ type: FORM_ACTIONS.setActive, payload: {} })
 
-        const copyFild: fildItemType[] = fild.map(item => item);
-        copyFild.map((item: fildItemType) => {
+        const copyFild: FildItemType[] = [...fild];
+        copyFild.map((item: FildItemType) => {
             if (item.id === id) {
-                player ? item.state = "O" : item.state = "X"
+                gameState.map(player => {
+                    player.active ? item.state = player.name : ''
 
-                if (player) {
-                    const res: number[] = resultsO;
-                    res.push(item.id);
-                    setResultsO(res);
-                }
-                else {
-                    const res: number[] = resultsX;
-                    res.push(item.id);
-                    setResultsX(res);
-                }
+                    player.active && gameDispatch({ type: FORM_ACTIONS.setResult, payload: { name: player.name, result: item.id } })
+                })
             };
         });
         setFild(copyFild);
@@ -105,25 +141,30 @@ const GameXO: React.FC = () => {
             item.state = null;
         })
         setFild(copyFild);
-        setPlayer(false);
-        setResultsX([]);
-        setResultsO([]);
-        setWinerX(false);
-        setWinerO(false);
         setMoves(0);
+        setFinish(false)
+
+        gameDispatch({ type: FORM_ACTIONS.setClean, payload: {} })
     }
 
     useEffect(() => {
-        if (checkResults(resultsX)) setWinerX(true);
-        if (checkResults(resultsO)) setWinerO(true);
-    }, [fild]);
+
+        gameState.map(player => {
+            if (checkResults(player.result) && !finish) {
+                gameDispatch({ type: FORM_ACTIONS.setWin, payload: { name: player.name } })
+            }
+
+            if (player.win) setFinish(true);
+        })
+    }, [gameState]);
 
     const viewPlayers = (
         <>
             <p className={styles.game__turn}>Ход игрока</p>
             <div className={styles.game__players}>
-                <p className={player ? styles.game__players_name : styles.game__players_name_lead}>Игрок X</p>
-                <p className={player ? styles.game__players_name_lead : styles.game__players_name}>Игрок O</p>
+                {gameState.map(player =>
+                    <p key={player.id} className={player.active ? styles.game__players_name_lead : styles.game__players_name}>Игрок {player.name}</p>
+                )}
             </div>
         </>);
 
@@ -131,11 +172,13 @@ const GameXO: React.FC = () => {
         <h2 className={styles.game__title}>Крестики нолики</h2>
 
         <div className={styles.game__viewPlayers}>
-            {(!winerX && !winerO && !(moves === fild.length)) && viewPlayers}
+            {(!finish && !(moves === fild.length)) && viewPlayers}
 
-            {winerX && <p className={styles.game__players_name}>Победил игрок X</p>}
-            {winerO && <p className={styles.game__players_name}>Победил игрок O</p>}
-            {(moves === fild.length) && <p className={styles.game__players_name}>Ничья!</p>}
+            {gameState.map(player =>
+                player.win && <p key={player.id} className={styles.game__players_name}>Победил игрок {player.name}</p>
+            )}
+
+            {((moves === fild.length) && !finish) && <p className={styles.game__players_name}>Ничья!</p>}
         </div>
 
 
@@ -147,7 +190,7 @@ const GameXO: React.FC = () => {
                     onClick={() => {
                         if (!item.state) { handleClick(item.id) }
                     }}
-                    disabled={(winerX || winerO) ? true : false}
+                    disabled={finish ? true : false}
                 >
                     {item.state}
                 </button>)}
@@ -155,7 +198,7 @@ const GameXO: React.FC = () => {
 
         <button
             className={styles.game__clean}
-            onClick={() => { cleanFild(); }}
+            onClick={cleanFild}
         >Начать заново</button>
     </div >);
 };
