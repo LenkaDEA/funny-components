@@ -1,7 +1,7 @@
 import type React from "react";
 
 import styles from "./GameXO.module.scss";
-import { useEffect, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 
 type FildItemType = {
     id: number,
@@ -147,16 +147,13 @@ const GameXO: React.FC = () => {
         gameDispatch({ type: FORM_ACTIONS.setClean, payload: {} })
     }
 
-    useEffect(() => {
+    gameState.map(player => {
+        if (checkResults(player.result) && !finish) {
+            gameDispatch({ type: FORM_ACTIONS.setWin, payload: { name: player.name } })
+            setFinish(true);
 
-        gameState.map(player => {
-            if (checkResults(player.result) && !finish) {
-                gameDispatch({ type: FORM_ACTIONS.setWin, payload: { name: player.name } })
-            }
-
-            if (player.win) setFinish(true);
-        })
-    }, [gameState]);
+        }
+    })
 
     const viewPlayers = (
         <>
