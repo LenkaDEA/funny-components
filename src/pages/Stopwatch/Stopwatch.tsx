@@ -1,6 +1,8 @@
 import type React from "react";
 import { useEffect, useReducer } from "react";
 
+import styles from "./Stopwatch.module.scss";
+
 
 type TimerState = {
     id: number,
@@ -87,12 +89,9 @@ function timerReducer(state: TimerState, action: TimerActions) {
 }
 
 const Stopwatch: React.FC = () => {
-    console.log('Render!')
-
     const [timer, timerDispatch] = useReducer(timerReducer, Timer)
 
     const handleStart = () => {
-        console.log('Start')
         timerDispatch({ type: FORM_TIMER_ACTIONS.setRun, payload: { run: true } })
 
         const nowTime = new Date(Date.now());
@@ -102,30 +101,25 @@ const Stopwatch: React.FC = () => {
     }
 
     const handleStop = () => {
-        console.log('Stop')
         timerDispatch({ type: FORM_TIMER_ACTIONS.setRun, payload: { run: false } });
         timerDispatch({ type: FORM_TIMER_ACTIONS.setPause, payload: { pause: true } })
     }
 
     const handleResume = () => {
-        console.log('Resume')
         timerDispatch({ type: FORM_TIMER_ACTIONS.setPause, payload: { pause: false } });
         timerDispatch({ type: FORM_TIMER_ACTIONS.setRun, payload: { run: true } })
     }
 
     const handleClean = () => {
-        console.log('Clean')
         timerDispatch({ type: FORM_TIMER_ACTIONS.setClear, payload: {} })
         timerDispatch({ type: FORM_TIMER_ACTIONS.setRun, payload: { run: false } })
         timerDispatch({ type: FORM_TIMER_ACTIONS.setPause, payload: { pause: false } })
     }
 
     useEffect(() => {
-        console.log('useEffect')
         if (!timer.stateRun) return
-        const interval = setInterval(() => {
-            console.log('setInterval')
 
+        const interval = setInterval(() => {
             const nowTime = new Date(Date.now());
             timerDispatch({ type: FORM_TIMER_ACTIONS.viewTime, payload: { nowTime: nowTime } })
         }, 50)
@@ -134,14 +128,15 @@ const Stopwatch: React.FC = () => {
     }, [timer.stateRun])
 
     return (
-        <>
-            <p>{`${timer.mm.toString().padStart(2, '0')}:${timer.ss.toString().padStart(2, '0')}.${timer.ms.toString().padStart(3, '0')} `}</p>
-            {!timer.stateRun && !timer.statePause && <button onClick={handleStart}>Начать</button>}
+        <div className={styles.stopwatch}>
+            <p className={styles.stopwatch__time}>{`${timer.mm.toString().padStart(2, '0')}:${timer.ss.toString().padStart(2, '0')}.${timer.ms.toString().padStart(3, '0')} `}</p>
+
+            <button className={styles.stopwatch__start} onClick={handleStart} disabled={timer.stateRun || timer.statePause}>Начать</button>
             {timer.statePause
-                ? <button onClick={handleResume}>Продолжить</button>
-                : <button onClick={handleStop}>Пауза</button>}
-            <button onClick={handleClean} disabled={timer.ms === 0 && timer.ss === 0 && timer.mm === 0}>Сбросить</button>
-        </>
+                ? <button className={styles.stopwatch__buttons} onClick={handleResume}>Продолжить</button>
+                : <button className={styles.stopwatch__buttons} onClick={handleStop} disabled={!timer.stateRun}>Пауза</button>}
+            <button className={styles.stopwatch__buttons} onClick={handleClean} disabled={(timer.ms === 0 && timer.ss === 0 && timer.mm === 0)}>Сбросить</button>
+        </div>
     );
 };
 
