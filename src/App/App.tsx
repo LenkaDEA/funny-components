@@ -8,6 +8,7 @@ function App() {
       <header>
         <Link className={styles.link} to="/GameXO"> GameXO </Link>
         <Link className={styles.link} to="/Stopwatch"> Stopwatch </Link>
+        <Link className={styles.link} to="/NestedCheckbox"> Nested checkbox </Link>
       </header>
 
       <main>

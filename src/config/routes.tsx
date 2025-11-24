@@ -3,6 +3,7 @@ import type { RouteObject } from "react-router";
 
 import GameXO from "pages/GameXO";
 import Stopwatch from "pages/Stopwatch";
+import NestedCheckbox from "pages/NestedCheckbox"
 
 
 const routesConfig: RouteObject[] = [
@@ -18,6 +19,10 @@ const routesConfig: RouteObject[] = [
                 path: "/Stopwatch",
                 element: <Stopwatch />
             },
+            {
+                path: "/NestedCheckbox",
+                element: <NestedCheckbox />
+            }
         ]
     }
 
